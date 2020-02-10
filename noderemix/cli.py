@@ -1,8 +1,8 @@
+import sys
 import argparse
 import requests
-import base64
-import json
-from urllib.parse import urlparse
+
+from .parser import parse_raw_config
 
 
 def main():
@@ -30,31 +30,10 @@ def main():
             with open(args.output, 'wb') as f:
                 f.write(resp.content)
         parse_raw_config(resp.content)
-
-
-class ProxyURL:
-    def __init__(self, raw):
-        self.raw = raw
-        self.parsed = urlparse(self.raw)
-        self.scheme = self.parsed.scheme
-        self.data_str = base64.b64decode(self.parsed.netloc.encode()).decode()
-        self.data = json.loads(self.data_str)
-        if self.scheme == 'vmess':
-            self.name = self.data['ps']
-        else:
-            self.name = ''
-        #print(self.data)
-
-
-def parse_raw_config(raw: bytes):
-    cfg_str = base64.b64decode(raw).decode()
-    #print(cfg_str)
-    for line in cfg_str.split('\n'):
-        if not line:
-            continue
-        url = ProxyURL(line)
-        print(f'{url.name}:\n  {url.raw}')
-    return cfg_str
+    else:
+        print('Error: please specify a file or url')
+        parser.print_help()
+        sys.exit(1)
 
 
 if __name__ == '__main__':
