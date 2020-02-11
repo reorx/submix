@@ -6,10 +6,18 @@ so this module is the parser for "base64 scheme subscription config"
 
 import json
 import base64
-from urllib.parse import urlparse
+from typing import List
+from urllib.parse import urlparse, ParseResult
 
 
 class ProxyURL:
+    raw: str
+    parsed: ParseResult
+    scheme: str
+    data_str: str
+    data: dict
+    name: str
+
     def __init__(self, raw):
         self.raw = raw
         self.parsed = urlparse(self.raw)
@@ -23,12 +31,14 @@ class ProxyURL:
         #print(self.data)
 
 
-def parse_raw_config(raw: bytes):
+def parse_raw_config(raw: bytes) -> List[ProxyURL]:
+    purls = []
     cfg_str = base64.b64decode(raw).decode()
     #print(cfg_str)
     for line in cfg_str.split('\n'):
         if not line:
             continue
-        url = ProxyURL(line)
-        print(f'{url.name}:\n  {url.raw}')
-    return cfg_str
+        purl = ProxyURL(line)
+        print(f'{purl.name}:\n  {purl.raw}')
+        purls.append(purl)
+    return purls
