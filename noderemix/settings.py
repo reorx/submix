@@ -54,8 +54,7 @@ ROOT_URLCONF = 'noderemix.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': ['./noderemix/templates'],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
