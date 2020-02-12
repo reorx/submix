@@ -4,7 +4,7 @@ from typing import List
 
 import requests
 
-from noderemix.server import run
+from submix.server import run
 from .parser import parse_raw_config, ProxyURL
 
 

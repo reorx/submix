@@ -7,7 +7,7 @@ from . import views
 
 
 def run(sub_source, sub_content, purls):
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'noderemix.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'submix.settings')
     argv = ['manage.py', 'runserver']
     try:
         from django.core.management import execute_from_command_line

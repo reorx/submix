@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 
-package_name = 'noderemix'
+package_name = 'submix'
 
 
 def get_version():
