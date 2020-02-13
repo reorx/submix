@@ -10,7 +10,7 @@ from typing import List
 from urllib.parse import urlparse, ParseResult
 
 
-class ProxyURL:
+class Node:
     raw: str
     parsed: ParseResult
     scheme: str
@@ -31,17 +31,17 @@ class ProxyURL:
         #print(self.data)
 
 
-ProxyURLList = List[ProxyURL]
+NodeList = List[Node]
 
 
-def parse_raw_sub(raw: bytes) -> ProxyURLList:
-    purls = []
-    cfg_str = base64.b64decode(raw).decode()
-    #print(cfg_str)
-    for line in cfg_str.split('\n'):
+def parse_raw_sub(raw: bytes) -> NodeList:
+    nodes = []
+    decoded = base64.b64decode(raw).decode()
+    #print(decoded)
+    for line in decoded.split('\n'):
         if not line:
             continue
-        purl = ProxyURL(line)
-        print(f'{purl.name}:\n  {purl.raw}')
-        purls.append(purl)
-    return purls
+        node = Node(line)
+        print(f'{node.name}:\n  {node.raw}')
+        nodes.append(node)
+    return nodes

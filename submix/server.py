@@ -4,14 +4,14 @@ this module is not intended to use for production deployment.
 """
 import os
 from .views import cli_state
-from .parser import ProxyURLList
+from .parser import NodeList
 
 
-def run(sub_source: str, sub_content: bytes, purls: ProxyURLList):
+def run(sub_source: str, sub_content: bytes, nodes: NodeList):
     # set views state
     cli_state.sub_source = sub_source
     cli_state.sub_content = sub_content
-    cli_state.purls = purls
+    cli_state.nodes = nodes
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'submix.settings')
     argv = ['manage.py', 'runserver']

@@ -1,14 +1,13 @@
-from django.http import HttpResponse
 from django.views import View
 from django.shortcuts import render
 
-from submix.parser import ProxyURLList
+from submix.parser import NodeList
 
 
 class CliState:
     sub_source: str
     sub_content: bytes
-    purls: ProxyURLList
+    nodes: NodeList
 
 
 cli_state = CliState()

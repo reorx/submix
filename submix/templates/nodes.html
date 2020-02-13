@@ -19,8 +19,8 @@
     </thead>
   </table>
 
-  {% for purl in cli_state.purls %}
-    <div>{{ purl.name }}</div>
+  {% for node in cli_state.nodes %}
+    <div>{{ node.name }}</div>
   {% endfor %}
 {% endblock %}
 

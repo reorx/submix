@@ -4,7 +4,7 @@ import argparse
 import requests
 
 from submix.server import run
-from .parser import parse_raw_sub, ProxyURLList
+from .parser import parse_raw_sub, NodeList
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
 
     args = parser.parse_args()
 
-    purls: ProxyURLList
+    nodes: NodeList
     sub_content: bytes
     sub_source: str
 
@@ -31,7 +31,7 @@ def main():
         sub_source = args.file
         with open(args.file, 'r') as f:
             sub_content = f.read()
-        purls = parse_raw_sub(sub_content)
+        nodes = parse_raw_sub(sub_content)
     elif args.url:
         sub_source = args.url
         resp = requests.get(args.url)
@@ -39,14 +39,14 @@ def main():
         if args.output:
             with open(args.output, 'wb') as f:
                 f.write(sub_content)
-        purls = parse_raw_sub(sub_content)
+        nodes = parse_raw_sub(sub_content)
     else:
         print('Error: please specify a file or url')
         parser.print_help()
         sys.exit(1)
 
     if args.server:
-        run(sub_source, sub_content, purls)
+        run(sub_source, sub_content, nodes)
 
 
 if __name__ == '__main__':
