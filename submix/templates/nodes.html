@@ -1,6 +1,26 @@
 {% extends "./base.html" %}
 
+{% block head %}
+  {% load static %}
+  <link rel="stylesheet" href="{% static "css/datatables.min.css" %}">
+  <script src="{% static "js/datatables.min.js" %}"></script>
+{% endblock %}
+
 {% block main %}
   <h2>Nodes</h2>
+
+  <table id="example" class="display" style="width:100%">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Content</th>
+    </tr>
+    </thead>
+  </table>
+
+  {% for purl in cli_state.purls %}
+    <div>{{ purl.name }}</div>
+  {% endfor %}
 {% endblock %}
 
