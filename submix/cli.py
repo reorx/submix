@@ -1,11 +1,10 @@
 import sys
 import argparse
-from typing import List
 
 import requests
 
 from submix.server import run
-from .parser import parse_raw_sub, ProxyURL
+from .parser import parse_raw_sub, ProxyURLList
 
 
 def main():
@@ -24,7 +23,7 @@ def main():
 
     args = parser.parse_args()
 
-    purls: List[ProxyURL]
+    purls: ProxyURLList
     sub_content: bytes
     sub_source: str
 

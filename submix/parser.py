@@ -31,7 +31,10 @@ class ProxyURL:
         #print(self.data)
 
 
-def parse_raw_sub(raw: bytes) -> List[ProxyURL]:
+ProxyURLList = List[ProxyURL]
+
+
+def parse_raw_sub(raw: bytes) -> ProxyURLList:
     purls = []
     cfg_str = base64.b64decode(raw).decode()
     #print(cfg_str)
