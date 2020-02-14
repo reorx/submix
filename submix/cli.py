@@ -29,7 +29,7 @@ def main():
 
     if args.file:
         sub_source = args.file
-        with open(args.file, 'r') as f:
+        with open(args.file, 'rb') as f:
             sub_content = f.read()
         nodes = parse_raw_sub(sub_content)
     elif args.url:
