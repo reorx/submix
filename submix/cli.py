@@ -4,6 +4,7 @@ import argparse
 import requests
 
 from submix.server import run
+from submix.utils import setup_django
 from .parser import parse_raw_sub, NodeList
 
 
@@ -15,7 +16,7 @@ def main():
     parser.add_argument('file', metavar="FILE", nargs="?", type=str, help="file of downloaded subscription")
 
     # options
-    #parser.add_argument('-a', '--aa', type=int, default=0, help="")
+    # parser.add_argument('-a', '--aa', type=int, default=0, help="")
     parser.add_argument('-u', '--url', type=str, help="url to download subscription")
     parser.add_argument('-o', '--output', type=str, help="download url to file, use with -u")
 
@@ -26,6 +27,9 @@ def main():
     nodes: NodeList
     sub_content: bytes
     sub_source: str
+
+    # setup django before running the actual code
+    setup_django()
 
     if args.file:
         sub_source = args.file

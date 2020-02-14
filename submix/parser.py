@@ -11,6 +11,10 @@ import json
 import base64
 from urllib.parse import urlparse, ParseResult
 from .utils import base64_encode_str, base64_decode_str
+from .log import base_lg
+
+
+lg = base_lg.getChild(__name__)
 
 
 @dataclass
@@ -62,7 +66,7 @@ def parse_raw_sub(raw: bytes) -> NodeList:
     f = StringIO(base64.b64decode(raw).decode())
     for line in f.readlines():
         line = line.strip()
-        # print('line', line)
+        lg.debug(f'line: {line}')
         if not line:
             continue
         node = Node.new_from_url(line)

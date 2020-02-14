@@ -2,7 +2,7 @@
 Start a django server from command line,
 this module is not intended to use for production deployment.
 """
-import os
+
 from .views import cli_state
 from .parser import NodeList
 
@@ -13,7 +13,6 @@ def run(sub_source: str, sub_content: bytes, nodes: NodeList):
     cli_state.sub_content = sub_content
     cli_state.nodes = nodes
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'submix.settings')
     argv = ['manage.py', 'runserver']
     try:
         from django.core.management import execute_from_command_line

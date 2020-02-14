@@ -122,3 +122,48 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 # STATIC_ROOT = 'staticfiles'
+
+# Logging
+
+# LOG_FORMAT = '[%(name)s] %(levelname)s %(message)s t=%(asctime)s p=%(pathname)s:%(lineno)d'
+LOG_FORMAT = '%(asctime)s  %(levelname)s  %(name)-10s  %(message)s [%(funcName)s]'
+
+# LOG_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f%z'
+LOG_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
+
+print('use LOGGING config')
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'loggers': {
+        'submix': {
+            'handlers': ['stream'],
+            # 'level': 'INFO',
+            'level': 'DEBUG',
+        },
+        # 'django.db': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['stream'],
+        #     'propagate': 0,
+        # },
+
+        # vendors
+        'requests': {
+            'level': 'WARNING',
+            'handlers': ['stream'],
+            'propagate': 0,
+        },
+    },
+    'handlers': {
+        'stream': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'common',
+        },
+    },
+    'formatters': {
+        'common': {
+            'format': LOG_FORMAT,
+            'datefmt': LOG_DATE_FORMAT,
+        },
+    },
+}
