@@ -9,18 +9,36 @@
 {% block main %}
   <h2>Nodes</h2>
 
-  <table id="example" class="display" style="width:100%">
+  <table id="nodes-table" class="table" style="width:100%">
     <thead>
     <tr>
       <th>Name</th>
-      <th>Type</th>
+      <th>Protocol</th>
       <th>Content</th>
     </tr>
     </thead>
   </table>
 
-  {% for node in cli_state.nodes %}
-    <div>{{ node.name }}</div>
-  {% endfor %}
+  <script>
+    const dt = $('#nodes-table').DataTable({
+      columns: [
+        {data: 'name'},
+        {data: 'protocol'},
+        {data: 'config'},
+      ]
+    });
+
+    const updateData = function(d) {
+      dt.clear();
+      dt.rows.add(d);
+      dt.draw();
+    };
+
+    $(function() {
+      $.ajax('/api/nodes').done((resp) => {
+        updateData(resp.data);
+      });
+    });
+  </script>
 {% endblock %}
 

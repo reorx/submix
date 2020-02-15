@@ -1,7 +1,8 @@
 from django.views import View
 from django.shortcuts import render
 
-from submix.parser import NodeList
+from submix.parser import NodeList, Node
+from submix.utils import json_response, api_data, make_json_encoder_for_type
 
 
 class CliState:
@@ -20,6 +21,17 @@ class IndexView(View):
 
 class NodesView(View):
     def get(self, request):
-        return render(request, 'nodes.html', dict(
-            cli_state=cli_state,
-        ))
+        return render(request, 'nodes.html')
+
+
+node_keys = ['name', 'protocol', 'config']
+
+
+def format_node(node: Node):
+    return {k: getattr(node, k) for k in node_keys}
+
+
+class APINodesView(View):
+    def get(self, request):
+        d = api_data(cli_state.nodes)
+        return json_response(d, encoder=make_json_encoder_for_type(Node, format_node))
