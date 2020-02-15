@@ -2,7 +2,6 @@
 
 ## 2020-02-11
 
-Done:
 - project standarize: python packaging, requirements management
 - django integration
 - django template
@@ -15,15 +14,22 @@ Next:
 
 ## 2020-02-12
 
-Done:
 - rename nodemix to submix
 - upload to pypi
 - cli.py: rename config to subscription (sub)
 - django static configuration
 - bootstrap 4 and datatables assets
 
-
 ## 2020-02-13
 
 Done:
-- 
+- ProxyURL -> Node
+
+## 2020-02-14
+
+- logging
+- /api/nodes
+
+## 2020-02-15
+
+- add protocols.py, enhance Node parsing

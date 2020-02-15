@@ -2,6 +2,8 @@
 Considering that "base64 sheme" is the defacto format of subscription config,
 it will be the only supported format in the foreseeable future,
 so this module is the parser for "base64 scheme subscription config"
+
+url: https://github.com/2dust/v2rayN/wiki/%E8%AE%A2%E9%98%85%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E
 """
 from io import StringIO
 from typing import List
@@ -12,50 +14,59 @@ import base64
 from urllib.parse import urlparse, ParseResult
 from .utils import base64_encode_str, base64_decode_str
 from .log import base_lg
+from .protocols import Protocol, VmessConfig
 
 
 lg = base_lg.getChild(__name__)
 
 
-@dataclass
+@dataclass(init=False)
 class Node:
-    name: str
     protocol: str
-    data: dict
-    _data_str: str = field(init=False, repr=False)
-    _url: str = field(init=False, repr=False)
-    _url_parsed: ParseResult = field(init=False, repr=False)
+    name: str
+    ip: str
+    port: int
+    hash: str
+    config: dict
 
-    def get_url(self) -> str:
+    _url: str = field(repr=False)
+    _url_parsed: ParseResult = field(repr=False)
+
+    @property
+    def url(self) -> str:
         if self._url:
             return self._url
-        netloc = base64_encode_str(json.dumps(self.data))
+        netloc = base64_encode_str(json.dumps(self.config))
         return f'{self.protocol}://{netloc}'
 
-    @classmethod
-    def new_from_url(cls, url):
-        url_parsed = urlparse(url)
-        protocol = url_parsed.scheme
-        # print('url', url)
-        data_str = base64_decode_str(url_parsed.netloc)
-        data = json.loads(data_str)
-        name = ''
-        if protocol == 'vmess':
-            name = data['ps']
+    def get_vmess(self) -> VmessConfig:
+        Protocol.check(self.protocol, Protocol.vmess)
+        return VmessConfig.from_dict(self.config)
 
-        node = cls(
-            protocol=protocol,
-            data=data,
-            name=name,
-        )
+    @classmethod
+    def new_from_url(cls, url) -> 'Node':
+        lg.debug(f'url: {url}')
+        n = cls()
+        url_parsed = urlparse(url)
+        n.protocol = url_parsed.scheme
+        if n.protocol == Protocol.vmess:
+            config_str = base64_decode_str(url_parsed.netloc)
+            n.config = json.loads(config_str)
+            vmess = n.get_vmess()
+            n.name = vmess.ps
+            n.ip = vmess.add
+            n.port = vmess.port
+        elif n.protocol == Protocol.ssr:
+            config_str = base64_decode_str(url_parsed.netloc)
+        else:
+            raise ValueError('Cannot recognize protocol {n.protocol} in url')
 
         # set private attrs
-        node._url = url
-        node._url_parsed = url_parsed
-        node._data_str = data_str
+        n._url = url
+        n._url_parsed = url_parsed
 
-        # print(node.data)
-        return node
+        lg.debug(f'config: {n.config}')
+        return n
 
 
 NodeList = List[Node]
@@ -70,6 +81,6 @@ def parse_raw_sub(raw: bytes) -> NodeList:
         if not line:
             continue
         node = Node.new_from_url(line)
-        print(f'{node.name}:\n  {node.get_url()}')
+        print(f'{node.name}:\n  {node.url}')
         nodes.append(node)
     return nodes
