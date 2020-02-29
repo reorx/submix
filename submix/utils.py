@@ -1,5 +1,6 @@
 import base64
 import dataclasses
+import json
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
@@ -10,7 +11,15 @@ def base64_encode_str(s: str) -> str:
 
 
 def base64_decode_str(s: str) -> str:
+    # To avoid `incorrect padding` error, ref: https://stackoverflow.com/a/2942039/596206
+    s += '=' * (-len(s) % 4)
     return base64.b64decode(s.encode()).decode()
+
+
+def get_base64_config_from_url(url, scheme) -> dict:
+    """get config dict for base64 url like vmess:// or ssr://"""
+    config_str = base64_decode_str(url[len(scheme) + 3:])
+    return json.loads(config_str)
 
 
 def setup_django():

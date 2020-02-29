@@ -11,8 +11,8 @@ from dataclasses import dataclass, field
 
 import json
 import base64
-from urllib.parse import urlparse, ParseResult
-from .utils import base64_encode_str, base64_decode_str
+from urllib.parse import urlparse, ParseResult, unquote
+from .utils import base64_encode_str, base64_decode_str, get_base64_config_from_url
 from .log import base_lg
 from .protocols import Protocol, VmessConfig
 
@@ -45,19 +45,25 @@ class Node:
 
     @classmethod
     def new_from_url(cls, url) -> 'Node':
-        lg.debug(f'url: {url}')
+        unquoted_url = unquote(url)
+        lg.debug(f'url (unquoted): {unquoted_url}')
         n = cls()
-        url_parsed = urlparse(url)
+        url_parsed = urlparse(unquoted_url)
+        lg.debug(f'url_parsed: {url_parsed}')
         n.protocol = url_parsed.scheme
         if n.protocol == Protocol.vmess:
-            config_str = base64_decode_str(url_parsed.netloc)
-            n.config = json.loads(config_str)
+            # because base64 may contain `/`, it's not suitable to use url_parsed.netloc
+            # to get the base64 content, therefore we use this special helper function
+            n.config = get_base64_config_from_url(url, n.protocol)
             vmess = n.get_vmess()
             n.name = vmess.ps
             n.ip = vmess.add
             n.port = vmess.port
         elif n.protocol == Protocol.ssr:
-            config_str = base64_decode_str(url_parsed.netloc)
+            n.config = get_base64_config_from_url(url, n.protocol)
+        elif n.protocol == Protocol.ss:
+            n.config = {}
+            n.name = url_parsed.fragment
         else:
             raise ValueError('Cannot recognize protocol {n.protocol} in url')
 
@@ -81,6 +87,6 @@ def parse_raw_sub(raw: bytes) -> NodeList:
         if not line:
             continue
         node = Node.new_from_url(line)
-        print(f'{node.name}:\n  {node.url}')
+        lg.debug(f'node: name={node.name}\n  url={node.url}')
         nodes.append(node)
     return nodes

@@ -3,6 +3,7 @@ import argparse
 
 import requests
 
+from submix.filter import filter_nodes_by_name
 from submix.server import run
 from submix.utils import setup_django
 from .parser import parse_raw_sub, NodeList
@@ -19,6 +20,11 @@ def main():
     # parser.add_argument('-a', '--aa', type=int, default=0, help="")
     parser.add_argument('-u', '--url', type=str, help="url to download subscription")
     parser.add_argument('-o', '--output', type=str, help="download url to file, use with -u")
+
+    # filter
+    parser.add_argument('-i', '--include', type=str, help="")
+    parser.add_argument('-e', '--exclude', type=str, help="")
+    parser.add_argument('--human', action='store_true', help="print human readable")
 
     parser.add_argument('-s', '--server', action='store_true', help="start HTTP server")
 
@@ -48,6 +54,14 @@ def main():
         print('Error: please specify a file or url')
         parser.print_help()
         sys.exit(1)
+
+    # filter and print
+    filtered_nodes = filter_nodes_by_name(nodes, args.include, args.exclude)
+    for n in filtered_nodes:
+        if args.human:
+            print(f'{n.name}\n{n.url}')
+        else:
+            print(n.url)
 
     if args.server:
         run(sub_source, sub_content, nodes)

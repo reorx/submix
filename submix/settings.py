@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import sys
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -131,7 +133,7 @@ LOG_FORMAT = '%(asctime)s  %(levelname)s  %(name)-10s  %(message)s [%(funcName)s
 # LOG_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f%z'
 LOG_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
-print('use LOGGING config')
+print('use LOGGING config', file=sys.stderr)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
