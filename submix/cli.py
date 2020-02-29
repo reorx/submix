@@ -1,3 +1,4 @@
+import logging
 import sys
 import argparse
 
@@ -7,6 +8,8 @@ from submix.filter import filter_nodes_by_name
 from submix.server import run
 from submix.utils import setup_django
 from .parser import parse_raw_sub, NodeList
+from .log import base_lg
+from . import settings
 
 
 def main():
@@ -27,6 +30,12 @@ def main():
     parser.add_argument('--human', action='store_true', help="print human readable")
 
     parser.add_argument('-s', '--server', action='store_true', help="start HTTP server")
+    parser.add_argument(
+        '-d', '--debug', action='count', default=0,
+        help="""\
+-d: set submix logger level to DEBUG;
+-dd: set all loggers (in settings.LOGGING) level to DEBUG;
+-ddd: set all loggers and root logger level to DEBUG.""")
 
     args = parser.parse_args()
 
@@ -36,6 +45,15 @@ def main():
 
     # setup django before running the actual code
     setup_django()
+
+    if args.debug >= 1:
+        base_lg.setLevel(logging.DEBUG)
+    if args.debug >= 2:
+        for logger_name in settings.LOGGING['loggers']:
+            logging.getLogger(logger_name).setLevel(logging.DEBUG)
+    if args.debug >= 3:
+        logging.getLogger().setLevel(logging.DEBUG)
+    base_lg.debug('DEBUG level enabled')
 
     if args.file:
         sub_source = args.file

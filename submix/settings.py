@@ -133,15 +133,14 @@ LOG_FORMAT = '%(asctime)s  %(levelname)s  %(name)-10s  %(message)s [%(funcName)s
 # LOG_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f%z'
 LOG_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
-print('use LOGGING config', file=sys.stderr)
+# print('use LOGGING config', file=sys.stderr)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'loggers': {
         'submix': {
             'handlers': ['stream'],
-            # 'level': 'INFO',
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
         # 'django.db': {
         #     'level': 'DEBUG',
