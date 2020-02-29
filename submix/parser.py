@@ -90,3 +90,7 @@ def parse_raw_sub(raw: bytes) -> NodeList:
         lg.debug(f'node: name={node.name}\n  url={node.url}')
         nodes.append(node)
     return nodes
+
+
+def convert_to_sub(nodes: NodeList) -> bytes:
+    return base64.b64encode('\n'.join([i.url for i in nodes]).encode())

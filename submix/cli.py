@@ -7,7 +7,7 @@ import requests
 from submix.filter import filter_nodes_by_name
 from submix.server import run
 from submix.utils import setup_django
-from .parser import parse_raw_sub, NodeList
+from .parser import parse_raw_sub, NodeList, convert_to_sub
 from .log import base_lg
 from . import settings
 
@@ -22,7 +22,7 @@ def main():
     # options
     # parser.add_argument('-a', '--aa', type=int, default=0, help="")
     parser.add_argument('-u', '--url', type=str, help="url to download subscription")
-    parser.add_argument('-o', '--output', type=str, help="download url to file, use with -u")
+    parser.add_argument('-o', '--output', type=str, help="compose new subscription to output")
 
     # filter
     parser.add_argument('-i', '--include', type=str, help="")
@@ -64,9 +64,6 @@ def main():
         sub_source = args.url
         resp = requests.get(args.url)
         sub_content = resp.content
-        if args.output:
-            with open(args.output, 'wb') as f:
-                f.write(sub_content)
         nodes = parse_raw_sub(sub_content)
     else:
         print('Error: please specify a file or url')
@@ -80,6 +77,13 @@ def main():
             print(f'{n.name}\n{n.url}')
         else:
             print(n.url)
+
+    # output
+    if args.output:
+        with open(args.output, 'wb') as f:
+            sub = convert_to_sub(filtered_nodes)
+            base_lg.info(f'writing to {args.output}, size={len(sub)}')
+            f.write(sub)
 
     if args.server:
         run(sub_source, sub_content, nodes)
