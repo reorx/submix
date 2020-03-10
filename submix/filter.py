@@ -7,11 +7,10 @@ def match(pattern, s):
 
 # simple filter on name
 def filter_nodes_by_name(nodes, include=None, exclude=None):
-    l = []
-    for n in nodes:
-        # TODO checkout schema-cli to improve the code
-        if exclude is not None and match(exclude, n.name):
-            continue
-        if include is not None and match(include, n.name):
-            l.append(n)
+    # TODO improve code from schema-cli
+    l = list(nodes)
+    if include is not None:
+        l = [n for n in l if match(include, n.name)]
+    if exclude is not None:
+        l = [n for n in l if not match(exclude, n.name)]
     return l
