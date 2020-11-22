@@ -2,7 +2,9 @@ Pipfile
 build/
 dist/
 *.egg-info/
+venv/
 
 .idea/
 
 *.sqlite3
+data/

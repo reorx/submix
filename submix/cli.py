@@ -74,7 +74,7 @@ def main():
     filtered_nodes = filter_nodes_by_name(nodes, args.include, args.exclude)
     for n in filtered_nodes:
         if args.human:
-            print(f'{n.name}\n{n.url}')
+            print(f'{n.name}\n{n.url}\n{n.config_obj}')
         else:
             print(n.url)
 

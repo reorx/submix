@@ -1,25 +1,46 @@
 import base64
+import binascii
 import dataclasses
-import json
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 
 
-def base64_encode_str(s: str) -> str:
-    return base64.b64encode(s.encode()).decode()
+def base64_encode_str(s: str, urlsafe=False) -> str:
+    if urlsafe:
+        return base64.urlsafe_b64encode(s.encode()).decode()
+    else:
+        return base64.b64encode(s.encode()).decode()
 
 
-def base64_decode_str(s: str) -> str:
+def base64_decode_str(s: str, urlsafe=True) -> str:
     # To avoid `incorrect padding` error, ref: https://stackoverflow.com/a/2942039/596206
     s += '=' * (-len(s) % 4)
-    return base64.b64decode(s.encode()).decode()
+    try:
+        if urlsafe:
+            return base64.urlsafe_b64decode(s.encode()).decode()
+        else:
+            return base64.b64decode(s.encode()).decode()
+    except binascii.Error:
+        print(f'base64.b64decode: {s}')
+        raise
 
 
-def get_base64_config_from_url(url, scheme) -> dict:
-    """get config dict for base64 url like vmess:// or ssr://"""
-    config_str = base64_decode_str(url[len(scheme) + 3:])
-    return json.loads(config_str)
+def base64_decode_bytes(s: bytes, urlsafe=True) -> bytes:
+    s += b'=' * (-len(s) % 4)
+    try:
+        if urlsafe:
+            return base64.urlsafe_b64decode(s)
+        else:
+            return base64.b64decode(s)
+    except binascii.Error:
+        print(f'base64.b64decode: {s}')
+        raise
+
+
+def get_base64_config_from_url(url, scheme) -> str:
+    """get config str for base64 url like vmess:// or ssr://"""
+    return base64_decode_str(url[len(scheme) + 3:])
 
 
 def setup_django():
